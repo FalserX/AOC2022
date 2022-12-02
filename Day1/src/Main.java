@@ -11,7 +11,9 @@ public class Main {
         Path currentDirectoryPath = Paths.get("").toAbsolutePath();
         List<Integer> elfsCaloriesPortable = new ArrayList<>();
         int currentElfCalories = 0;
-        int maxElfCalories = 0;
+        int maxElfCaloriesTopFirst;
+        int maxElfCaloriesTopSecond;
+        int maxElfCaloriesTopThird;
             File inputFile = new File(currentDirectoryPath + "/out/production/Day1/input.txt");
             if (inputFile.exists()) {
                 try {
@@ -30,12 +32,13 @@ public class Main {
                             }
                         }
                     }
-                    for (Integer currentCalorieElf: elfsCaloriesPortable) {
-                        if (maxElfCalories < currentCalorieElf) {
-                            maxElfCalories = currentCalorieElf;
-                        }
-                    }
-                    System.out.println(maxElfCalories);
+                    List<Integer> sortedElfsCaloriesPortable = elfsCaloriesPortable.stream().sorted().toList();
+                    maxElfCaloriesTopFirst = sortedElfsCaloriesPortable.get(sortedElfsCaloriesPortable.size()-1);
+                    maxElfCaloriesTopSecond = sortedElfsCaloriesPortable.get(sortedElfsCaloriesPortable.size()-2);
+                    maxElfCaloriesTopThird = sortedElfsCaloriesPortable.get(sortedElfsCaloriesPortable.size()-3);
+                    System.out.println("1 : " + maxElfCaloriesTopFirst);
+                    System.out.println("2 : " + (maxElfCaloriesTopFirst + maxElfCaloriesTopSecond + maxElfCaloriesTopThird));
+
                 }
                 catch (FileNotFoundException fileNotFoundException)
                 {
