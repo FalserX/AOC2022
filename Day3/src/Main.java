@@ -14,6 +14,7 @@ public class Main {
         int finalResult2 = 0;
         List<Character> priorityLetters = addPriorityLettersToList();
         List<Character> commonCharacters = new ArrayList<>();
+        List<Character> commonCharactersForBadge = new ArrayList<>();
 
         Path currentDirectoryPath = Paths.get("").toAbsolutePath();
         File inputFile = new File(currentDirectoryPath + "/out/production/Day3/input.txt");
@@ -30,29 +31,60 @@ public class Main {
                 throw new RuntimeException(e);
             }
         }
-   /*     if (inputFile.exists()) {
+        if (inputFile.exists()) {
             try {
                 Scanner readFile2 = new Scanner(inputFile);
+                String sack1;
+                String sack2;
+                String sack3;
                 while (readFile2.hasNextLine()) {
+                    sack1 = readFile2.nextLine();
+                    sack2 = readFile2.nextLine();
+                    sack3 = readFile2.nextLine();
+                    commonCharactersForBadge.addAll(lettersCompare(sack1, sack2, sack3));
                 }
+
             } catch (FileNotFoundException e) {
                 throw new RuntimeException(e);
             }
-        }*/
+        }
         for (Character c : commonCharacters) {
           finalResult += (priorityLetters.indexOf(c) + 1);
+        }
+        for (Character c : commonCharactersForBadge) {
+            finalResult2 += (priorityLetters.indexOf(c) + 1);
         }
 
         System.out.println("1 : " + finalResult);
         System.out.println("2 : " + finalResult2);
 
     }
+
+    public static List<Character> lettersCompare(String s1, String s2, String s3) {
+        List<Character> characters = new ArrayList<>();
+        char[] characters1 = s1.toCharArray();
+        char[] characters2 = s2.toCharArray();
+        char[] characters3 = s3.toCharArray();
+        for (Character c1: characters1) {
+            for (Character c2: characters2) {
+                for (Character c3: characters3)  {
+                    if (c1.equals(c2) && !characters.contains(c1)) {
+                        if (c1.equals(c3)) {
+                            characters.add(c1);
+                        }
+                    }
+                }
+            }
+        }
+        return characters;
+    }
+
     public static List<Character> lettersCompare(String s1, String s2) {
         List<Character> characters = new ArrayList<>();
         char[] characters1 = s1.toCharArray();
         char[] characters2 = s2.toCharArray();
         for (Character c1: characters1) {
-            for(Character c2: characters2) {
+            for (Character c2: characters2) {
                 if (c1.equals(c2) && !characters.contains(c1)) {
                     characters.add(c1);
                 }
