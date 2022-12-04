@@ -33,7 +33,12 @@ public class Main {
             try {
                 Scanner readFile2 = new Scanner(inputFile);
                 while (readFile2.hasNextLine()) {
-                  readFile2.nextLine();
+                    String pair = readFile2.nextLine();
+                    String firstElf = pair.split(",")[0];
+                    String secondElf = pair.split(",")[1];
+                    if (compareOverlappingZones(firstElf, secondElf)) {
+                        finalResult2++;
+                    }
                 }
 
             } catch (FileNotFoundException e) {
@@ -43,6 +48,26 @@ public class Main {
 
         System.out.println("1 : " + finalResult);
         System.out.println("2 : " + finalResult2);
+    }
+
+    public static boolean compareOverlappingZones(String zonesElf1, String zonesElf2) {
+        try {
+            int startZoneElf1 = Integer.parseInt(zonesElf1.split("-")[0]);
+            int endZoneElf1 = Integer.parseInt(zonesElf1.split("-")[1]);
+            int startZoneElf2 = Integer.parseInt(zonesElf2.split("-")[0]);
+            int endZoneElf2 = Integer.parseInt(zonesElf2.split("-")[1]);
+            List<Integer> zonesIntElf1 = zones(startZoneElf1, endZoneElf1);
+            List<Integer> zonesIntElf2 = zones(startZoneElf2, endZoneElf2);
+
+            for (int currentZone: zonesIntElf1) {
+                if (zonesIntElf2.contains(currentZone)) {
+                    return true;
+                }
+            }
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        return false;
     }
 
     public static boolean compareZonesElves(String zonesElf1, String zonesElf2) {
