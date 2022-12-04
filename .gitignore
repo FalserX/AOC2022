@@ -4,3 +4,5 @@
 
 # Remove the out directory and all subdirectories of out
 out/**
+# Remove .iml file from IDEA IntelliJ
+*.iml
