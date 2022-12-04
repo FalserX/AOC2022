@@ -1,0 +1,6 @@
+# Remove all ref to IDEA IntelliJ / VsCode
+.idea
+.vscode
+
+# Remove the out directory and all subdirectories of out
+out/**
