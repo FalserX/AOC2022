@@ -11,10 +11,9 @@ import java.util.Vector;
 public class Main {
     public static void main(String[] args) {
         StringBuilder finalResult = new StringBuilder();
-        Vector<Stack<String>> cratesScheme = new Vector<>();
-        int finalResult2 = 0;
+        StringBuilder finalResult2 = new StringBuilder();
+
         int linePosBetweenSchemeAndInstructs = 0;
-        List<Integer> indexCol = new ArrayList<>();
         Path currentDirectoryPath = Paths.get("").toAbsolutePath();
         List<String> lines;
         try {
@@ -27,82 +26,116 @@ public class Main {
                     break;
                 }
             }
-            String[] indexes = lines.get(linePosBetweenSchemeAndInstructs-1).split(" ");
-            for (String index : indexes) {
-                if (!index.trim().equals("")) {
-                    indexCol.add(Integer.parseInt(index));
-                }
-            }
+            Vector<Stack<String>> cratesSchemeUnit = initializeList(linePosBetweenSchemeAndInstructs, lines);
+            Vector<Stack<String>> cratesSchemeUpdated = initializeList(linePosBetweenSchemeAndInstructs, lines);
 
-            for (int i = linePosBetweenSchemeAndInstructs-2; i >= 0;i--) {
-                String currentLine = lines.get(i).replace("    "," ");
-                String[] crates = currentLine.split(" ");
-                if (linePosBetweenSchemeAndInstructs-2 == i) {
-                    for (String crate : crates) {
-                        Stack<String> stack1 = new Stack<>();
-                        stack1.push(crate.replace("[", "").replace("]", ""));
-                        cratesScheme.add(stack1);
-                    }
-                } else {
-                    if (crates.length < cratesScheme.size()) {
-                        int currentIndex = 0;
-                        for (int j = 0; j < crates.length; j++) {
-                            cratesScheme.get(j).push(crates[j].replace("[", "").replace("]", ""));
-                            currentIndex++;
-                        }
-                        for (int j = currentIndex; j < cratesScheme.size();j++) {
-                            cratesScheme.get(j).push(" ");
-                        }
-                    } else {
-                        for (int j = 0; j < crates.length; j++) {
-                            cratesScheme.get(j).push(crates[j].replace("[", "").replace("]", ""));
-                        }
-                    }
-                }
-            }
-            for (int i = linePosBetweenSchemeAndInstructs+1; i < lines.size();i++) {
+            for (int i = linePosBetweenSchemeAndInstructs+1; i < lines.size(); i++) {
                 String[] instructions = lines.get(i).split(" ");
-                move(Integer.parseInt(instructions[1]), Integer.parseInt(instructions[3]),
-                        Integer.parseInt(instructions[5]),
-                        cratesScheme);
+                int nbMoves = Integer.parseInt(instructions[1]);
+                int posStart = Integer.parseInt(instructions[3]);
+                int posEnd = Integer.parseInt(instructions[5]);
+                move(nbMoves, posStart, posEnd, cratesSchemeUnit);
             }
-            for (Stack<String> crates: cratesScheme) {
+            for (int i = linePosBetweenSchemeAndInstructs+1; i < lines.size(); i++) {
+                String[] instructions = lines.get(i).split(" ");
+                int nbMoves = Integer.parseInt(instructions[1]);
+                int posStart = Integer.parseInt(instructions[3]);
+                int posEnd = Integer.parseInt(instructions[5]);
+                moveMultiples(nbMoves, posStart, posEnd, cratesSchemeUpdated);
+            }
+            for (Stack<String> crates: cratesSchemeUnit) {
                 finalResult.append(crates.peek());
+            }
+            for (Stack<String> cratesUpdated: cratesSchemeUpdated) {
+                finalResult2.append(cratesUpdated.peek());
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-      /*  if (inputFile.exists()) {
-            try {
-                Scanner readFile2 = new Scanner(inputFile);
-                while (readFile2.hasNextLine()) {
-                    String pair = readFile2.nextLine();
-
-                }
-
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-            }
-        }*/
 
         System.out.println("1 : " + finalResult);
         System.out.println("2 : " + finalResult2);
     }
 
-    public static Vector<Stack<String>> move(int nbMove, int positionStart, int positionEnd, Vector<Stack<String>> currentCrates) {
+    public static Vector<Stack<String>> initializeList(int linePosBetweenSchemeAndInstructs,
+                                                       List<String> lines) {
+        List<Integer> indexCol = new ArrayList<>();
+        Vector<Stack<String>> cratesScheme = new Vector<>();
+        String[] indexes = lines.get(linePosBetweenSchemeAndInstructs-1).split(" ");
+        for (String index : indexes) {
+            if (!index.trim().equals("")) {
+                indexCol.add(Integer.parseInt(index));
+            }
+        }
+
+        for (int i = linePosBetweenSchemeAndInstructs-2; i >= 0;i--) {
+            String currentLine = lines.get(i).replace("    "," ");
+            String[] crates = currentLine.split(" ");
+            if (linePosBetweenSchemeAndInstructs-2 == i) {
+                for (String crate : crates) {
+                    Stack<String> stack1 = new Stack<>();
+                    stack1.push(crate.replace("[", "").replace("]", ""));
+                    cratesScheme.add(stack1);
+                }
+            } else {
+                if (crates.length < cratesScheme.size()) {
+                    int currentIndex = 0;
+                    for (int j = 0; j < crates.length; j++) {
+                        String currentCrate = crates[j].replace("[", "").replace("]", "");
+                        cratesScheme.get(j).push(currentCrate);
+                        currentIndex++;
+                    }
+                    for (int j = currentIndex; j < cratesScheme.size();j++) {
+                        cratesScheme.get(j).push(" ");
+                    }
+                } else {
+                    for (int j = 0; j < crates.length; j++) {
+                        String currentCrate = crates[j].replace("[", "").replace("]", "");
+                        cratesScheme.get(j).push(currentCrate);
+                    }
+                }
+            }
+        }
+        return cratesScheme;
+    }
+
+    public static void move(int nbMove, int positionStart, int positionEnd, Vector<Stack<String>> currentCrates) {
         int i = 0;
-        while( i < nbMove) {
+        while(i < nbMove) {
             if (currentCrates.get(positionEnd-1).size() > 0) {
                 while (currentCrates.get(positionEnd - 1).peek().trim().equals("") || currentCrates.get(positionEnd-1).peek().trim().equals(" ")) {
                     currentCrates.get(positionEnd - 1).pop();
                 }
             }
-            while (currentCrates.get(positionStart-1).peek().trim().equals("") || currentCrates.get(positionStart-1).peek().trim().equals(" ")) {
-                currentCrates.get(positionStart-1).pop();
+            if (currentCrates.get(positionStart - 1).size() > 0) {
+                while (currentCrates.get(positionStart - 1).peek().trim().equals("") || currentCrates.get(positionStart - 1).peek().trim().equals(" ")) {
+                    currentCrates.get(positionStart - 1).pop();
+                }
             }
             currentCrates.get(positionEnd-1).push(currentCrates.get(positionStart-1).pop());
             i++;
         }
-        return currentCrates;
+    }
+    public static void moveMultiples(int nbMove, int positionStart, int positionEnd, Vector<Stack<String>> currentCrates) {
+        Stack<String> temp = new Stack<>();
+        int i = 0;
+        while(i < nbMove) {
+            if (currentCrates.get(positionEnd - 1).size() > 0) {
+                while (currentCrates.get(positionEnd - 1).peek().trim().equals("") || currentCrates.get(positionEnd - 1).peek().trim().equals(" ")) {
+                    currentCrates.get(positionEnd - 1).pop();
+                }
+            }
+            if (currentCrates.get(positionStart - 1).size() > 0) {
+                while (currentCrates.get(positionStart - 1).peek().trim().equals("") || currentCrates.get(positionStart - 1).peek().trim().equals(" ")) {
+                    currentCrates.get(positionStart - 1).pop();
+                }
+            }
+            temp.push(currentCrates.get(positionStart - 1).pop());
+            i++;
+        }
+
+        while(!temp.isEmpty()) {
+            currentCrates.get(positionEnd - 1).push(temp.pop());
+        }
     }
 }
